@@ -1,5 +1,6 @@
 import argparse
 import random
+from tabulate import tabulate
 
 from python_scheduler.algorithms.fcfs import fcfs
 from python_scheduler.algorithms.sjf import sjf
@@ -24,6 +25,30 @@ def generate_processes(n):
 
 
 # ----------------------------
+# PRINT TABLE FUNCTION
+# ----------------------------
+def print_table(results):
+    table = []
+
+    for r in results:
+        table.append([
+            r["pid"],
+            r["start"],
+            r["finish"],
+            r["waiting"],
+            r["turnaround"]
+        ])
+
+    print("\n=== SCHEDULING RESULT TABLE ===")
+
+    print(tabulate(
+        table,
+        headers=["PID", "Start", "Finish", "Waiting", "Turnaround"],
+        tablefmt="grid"
+    ))
+
+
+# ----------------------------
 # MAIN CONTROLLER
 # ----------------------------
 def main():
@@ -45,7 +70,7 @@ def main():
         print(p)
 
     # ----------------------------
-    # COMPARISON MODE (NEW)
+    # COMPARISON MODE
     # ----------------------------
     if args.algo == "compare":
         print("\n=== COMPARISON MODE ===")
@@ -62,10 +87,12 @@ def main():
             priority_result
         )
 
-        print("\n--- RESULTS ---")
+        print("\n=== COMPARISON RESULTS ===")
+
         for algo, stats in comparison.items():
             print(f"\n{algo}")
-            print(stats)
+            print("Average Waiting Time:", stats["avg_waiting"])
+            print("Average Turnaround Time:", stats["avg_turnaround"])
 
         return
 
@@ -92,8 +119,10 @@ def main():
         print("Invalid algorithm")
         return
 
-    print("\nResults:")
-    print(result)
+    # ----------------------------
+    # CLEAN OUTPUT
+    # ----------------------------
+    print_table(result)
 
 
 if __name__ == "__main__":
