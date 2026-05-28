@@ -1,7 +1,13 @@
 import argparse
 import random
 from tabulate import tabulate
+import sys
+import os
 
+# Fix Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+# Import algorithms
 from python_scheduler.algorithms.fcfs import fcfs
 from python_scheduler.algorithms.sjf import sjf
 from python_scheduler.algorithms.priority import priority_scheduling
@@ -14,6 +20,7 @@ from python_scheduler.metrics import compare_algorithms
 # ----------------------------
 def generate_processes(n):
     processes = []
+
     for i in range(n):
         processes.append({
             "pid": i + 1,
@@ -21,13 +28,15 @@ def generate_processes(n):
             "burst": random.randint(1, 10),
             "priority": random.randint(1, 5)
         })
+
     return processes
 
 
 # ----------------------------
-# PRINT TABLE FUNCTION
+# PRINT TABLE
 # ----------------------------
 def print_table(results):
+
     table = []
 
     for r in results:
@@ -49,9 +58,10 @@ def print_table(results):
 
 
 # ----------------------------
-# MAIN CONTROLLER
+# MAIN FUNCTION
 # ----------------------------
 def main():
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--random", type=int, default=5)
@@ -62,10 +72,11 @@ def main():
 
     processes = generate_processes(args.random)
 
-    print("\n=== EduOS Controller ===")
-    print("Algorithm:", args.algo)
+    print("\n=== EduOS Scheduler Simulator ===")
+    print("Selected Algorithm:", args.algo)
 
     print("\nGenerated Processes:")
+
     for p in processes:
         print(p)
 
@@ -73,7 +84,6 @@ def main():
     # COMPARISON MODE
     # ----------------------------
     if args.algo == "compare":
-        print("\n=== COMPARISON MODE ===")
 
         fcfs_result = fcfs(processes)
         sjf_result = sjf(processes)
@@ -90,6 +100,7 @@ def main():
         print("\n=== COMPARISON RESULTS ===")
 
         for algo, stats in comparison.items():
+
             print(f"\n{algo}")
             print("Average Waiting Time:", stats["avg_waiting"])
             print("Average Turnaround Time:", stats["avg_turnaround"])
@@ -97,33 +108,35 @@ def main():
         return
 
     # ----------------------------
-    # SINGLE ALGORITHM MODE
+    # SINGLE ALGORITHM
     # ----------------------------
     if args.algo == "fcfs":
-        print("\n--- FCFS ---")
+
         result = fcfs(processes)
 
     elif args.algo == "sjf":
-        print("\n--- SJF ---")
+
         result = sjf(processes)
 
     elif args.algo == "priority":
-        print("\n--- PRIORITY ---")
+
         result = priority_scheduling(processes)
 
     elif args.algo == "rr":
-        print("\n--- ROUND ROBIN ---")
+
         result = round_robin(processes, args.quantum)
 
     else:
+
         print("Invalid algorithm")
         return
 
-    # ----------------------------
-    # CLEAN OUTPUT
-    # ----------------------------
+    # Print results
     print_table(result)
 
 
+# ----------------------------
+# START PROGRAM
+# ----------------------------
 if __name__ == "__main__":
     main()
